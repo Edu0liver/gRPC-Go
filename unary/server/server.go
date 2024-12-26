@@ -3,11 +3,15 @@ package server
 import (
 	"context"
 	"errors"
+	"log"
 	"net"
 	"sync"
+	"time"
 	"unary/pb"
 
+	"github.com/golang-jwt/jwt"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 )
 
 type User struct {
@@ -30,12 +34,17 @@ func NewUserService() *UserService {
 }
 
 func Run() {
+	creds, err := credentials.NewServerTLSFromFile("server.crt", "server.key")
+	if err != nil {
+		log.Fatalf("Erro ao carregar certificados TLS: %v", err)
+	}
+
 	listen, err := net.Listen("tcp", ":50051")
 	if err != nil {
 		panic(err)
 	}
 
-	s := grpc.NewServer()
+	s := grpc.NewServer(grpc.Creds(creds), grpc.UnaryInterceptor(authInterceptor))
 
 	pb.RegisterUserServer(s, NewUserService())
 
@@ -77,4 +86,25 @@ func (us *UserService) GetUser(ctx context.Context, req *pb.GetUserRequest) (*pb
 		Age:  user.Age,
 		Name: user.Name,
 	}, nil
+}
+
+func (s *UserService) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginResponse, error) {
+	if req.Username == "user" && req.Password == "password" {
+		token, err := generateJWT(req.Username)
+		if err != nil {
+			return nil, err
+		}
+
+		return &pb.LoginResponse{Token: token}, nil
+	}
+
+	return nil, errors.New("usuário ou senha inválidos")
+}
+
+func generateJWT(username string) (string, error) {
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"username": username,
+		"exp":      time.Now().Add(time.Hour * 1).Unix(),
+	})
+	return token.SignedString(jwtKey)
 }
