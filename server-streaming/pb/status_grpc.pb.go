@@ -19,27 +19,27 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Status_StreamStatus_FullMethodName = "/pb.Status/StreamStatus"
+	StatusService_StreamStatus_FullMethodName = "/pb.StatusService/StreamStatus"
 )
 
-// StatusClient is the client API for Status service.
+// StatusServiceClient is the client API for StatusService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type StatusClient interface {
+type StatusServiceClient interface {
 	StreamStatus(ctx context.Context, in *StreamRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[StreamResponse], error)
 }
 
-type statusClient struct {
+type statusServiceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewStatusClient(cc grpc.ClientConnInterface) StatusClient {
-	return &statusClient{cc}
+func NewStatusServiceClient(cc grpc.ClientConnInterface) StatusServiceClient {
+	return &statusServiceClient{cc}
 }
 
-func (c *statusClient) StreamStatus(ctx context.Context, in *StreamRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[StreamResponse], error) {
+func (c *statusServiceClient) StreamStatus(ctx context.Context, in *StreamRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[StreamResponse], error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	stream, err := c.cc.NewStream(ctx, &Status_ServiceDesc.Streams[0], Status_StreamStatus_FullMethodName, cOpts...)
+	stream, err := c.cc.NewStream(ctx, &StatusService_ServiceDesc.Streams[0], StatusService_StreamStatus_FullMethodName, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -54,69 +54,69 @@ func (c *statusClient) StreamStatus(ctx context.Context, in *StreamRequest, opts
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type Status_StreamStatusClient = grpc.ServerStreamingClient[StreamResponse]
+type StatusService_StreamStatusClient = grpc.ServerStreamingClient[StreamResponse]
 
-// StatusServer is the server API for Status service.
-// All implementations must embed UnimplementedStatusServer
+// StatusServiceServer is the server API for StatusService service.
+// All implementations must embed UnimplementedStatusServiceServer
 // for forward compatibility.
-type StatusServer interface {
+type StatusServiceServer interface {
 	StreamStatus(*StreamRequest, grpc.ServerStreamingServer[StreamResponse]) error
-	mustEmbedUnimplementedStatusServer()
+	mustEmbedUnimplementedStatusServiceServer()
 }
 
-// UnimplementedStatusServer must be embedded to have
+// UnimplementedStatusServiceServer must be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedStatusServer struct{}
+type UnimplementedStatusServiceServer struct{}
 
-func (UnimplementedStatusServer) StreamStatus(*StreamRequest, grpc.ServerStreamingServer[StreamResponse]) error {
+func (UnimplementedStatusServiceServer) StreamStatus(*StreamRequest, grpc.ServerStreamingServer[StreamResponse]) error {
 	return status.Errorf(codes.Unimplemented, "method StreamStatus not implemented")
 }
-func (UnimplementedStatusServer) mustEmbedUnimplementedStatusServer() {}
-func (UnimplementedStatusServer) testEmbeddedByValue()                {}
+func (UnimplementedStatusServiceServer) mustEmbedUnimplementedStatusServiceServer() {}
+func (UnimplementedStatusServiceServer) testEmbeddedByValue()                       {}
 
-// UnsafeStatusServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to StatusServer will
+// UnsafeStatusServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to StatusServiceServer will
 // result in compilation errors.
-type UnsafeStatusServer interface {
-	mustEmbedUnimplementedStatusServer()
+type UnsafeStatusServiceServer interface {
+	mustEmbedUnimplementedStatusServiceServer()
 }
 
-func RegisterStatusServer(s grpc.ServiceRegistrar, srv StatusServer) {
-	// If the following call pancis, it indicates UnimplementedStatusServer was
+func RegisterStatusServiceServer(s grpc.ServiceRegistrar, srv StatusServiceServer) {
+	// If the following call pancis, it indicates UnimplementedStatusServiceServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&Status_ServiceDesc, srv)
+	s.RegisterService(&StatusService_ServiceDesc, srv)
 }
 
-func _Status_StreamStatus_Handler(srv interface{}, stream grpc.ServerStream) error {
+func _StatusService_StreamStatus_Handler(srv interface{}, stream grpc.ServerStream) error {
 	m := new(StreamRequest)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
-	return srv.(StatusServer).StreamStatus(m, &grpc.GenericServerStream[StreamRequest, StreamResponse]{ServerStream: stream})
+	return srv.(StatusServiceServer).StreamStatus(m, &grpc.GenericServerStream[StreamRequest, StreamResponse]{ServerStream: stream})
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type Status_StreamStatusServer = grpc.ServerStreamingServer[StreamResponse]
+type StatusService_StreamStatusServer = grpc.ServerStreamingServer[StreamResponse]
 
-// Status_ServiceDesc is the grpc.ServiceDesc for Status service.
+// StatusService_ServiceDesc is the grpc.ServiceDesc for StatusService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var Status_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "pb.Status",
-	HandlerType: (*StatusServer)(nil),
+var StatusService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "pb.StatusService",
+	HandlerType: (*StatusServiceServer)(nil),
 	Methods:     []grpc.MethodDesc{},
 	Streams: []grpc.StreamDesc{
 		{
 			StreamName:    "StreamStatus",
-			Handler:       _Status_StreamStatus_Handler,
+			Handler:       _StatusService_StreamStatus_Handler,
 			ServerStreams: true,
 		},
 	},

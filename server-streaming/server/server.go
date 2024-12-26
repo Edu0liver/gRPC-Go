@@ -10,7 +10,7 @@ import (
 )
 
 type StatusServer struct {
-	pb.UnimplementedStatusServer
+	pb.UnimplementedStatusServiceServer
 }
 
 func (s *StatusServer) StreamStatus(req *pb.StreamRequest, stream grpc.ServerStreamingServer[pb.StreamResponse]) error {
@@ -41,7 +41,7 @@ func Run() {
 	}
 
 	grpcServer := grpc.NewServer()
-	pb.RegisterStatusServer(grpcServer, &StatusServer{})
+	pb.RegisterStatusServiceServer(grpcServer, &StatusServer{})
 	if err := grpcServer.Serve(listen); err != nil {
 		panic(err)
 	}

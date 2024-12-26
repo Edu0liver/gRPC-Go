@@ -16,7 +16,7 @@ func Run() {
 	}
 	defer dial.Close()
 
-	client := pb.NewStatusClient(dial)
+	client := pb.NewStatusServiceClient(dial)
 
 	stream, err := client.StreamStatus(context.Background(), &pb.StreamRequest{TaskId: "123"})
 	if err != nil {
