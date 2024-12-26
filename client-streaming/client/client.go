@@ -28,8 +28,7 @@ func Run() {
 	for _, temperature := range temperatures {
 		fmt.Printf("Sending temperature: %.2f\n", temperature)
 
-		err := stream.Send(&pb.TemperatureRequest{Temperature: temperature})
-		if err != nil {
+		if err := stream.Send(&pb.TemperatureRequest{Temperature: temperature}); err != nil {
 			panic(err)
 		}
 
