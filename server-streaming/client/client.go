@@ -25,10 +25,11 @@ func Run() {
 
 	for {
 		res, err := stream.Recv()
-		if err == io.EOF {
-			break
-		}
 		if err != nil {
+			if err == io.EOF {
+				break
+			}
+
 			panic(err)
 		}
 
