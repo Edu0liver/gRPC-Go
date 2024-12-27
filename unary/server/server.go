@@ -44,7 +44,7 @@ func Run() {
 		panic(err)
 	}
 
-	s := grpc.NewServer(grpc.Creds(creds), grpc.UnaryInterceptor(authInterceptor))
+	s := grpc.NewServer(grpc.Creds(creds), grpc.UnaryInterceptor(ChainUnaryInterceptors(authInterceptor, rateLimitInterceptor, logInterceptor, timeoutInterceptor)))
 
 	pb.RegisterUserServer(s, NewUserService())
 
